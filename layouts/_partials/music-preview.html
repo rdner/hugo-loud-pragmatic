@@ -1,0 +1,14 @@
+{{ $headingLevel := ( .HeadingLevel | default 3) }}
+{{ $cover := (.Item.Resources.GetMatch "cover.*") }}
+<li class="{{- with .Item.Section -}}{{- . -}}-section {{ end -}}preview">
+	<a class="unpadded" href="{{- .Item.RelPermalink -}}" title="{{- with .Item.Params.Artist -}}{{ . }} — {{ end -}}{{- .Item.Title | strings.Title -}}">
+		<article>
+			<header>
+				<h{{- $headingLevel }} class="centered title">{{- .Item.Title }} ({{ .Item.Page.PublishDate.Format "2006" -}})</h{{- $headingLevel -}}>
+			</header>
+			{{ with $cover }}
+			<img src="{{- .RelPermalink -}}" alt="cover">
+			{{ end }}
+		</article>
+	</a>
+</li>

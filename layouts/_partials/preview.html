@@ -1,0 +1,16 @@
+{{ $headingLevel := ( .HeadingLevel | default 3) }}
+{{ $cover := (.Item.Resources.GetMatch "cover.*") }}
+<li class="{{- with .Item.Section -}}{{- . -}}-section {{ end -}}preview{{- if $cover }} with-cover shadowed{{- end -}}"{{- if $cover }} style="background-image: url('{{- $cover.RelPermalink -}}')"{{- end -}}>
+	<a class="unpadded" href="{{- .Item.RelPermalink -}}">
+		<article>
+			<header>
+				<h{{- $headingLevel }} class="title">{{- .Item.Title | strings.Title -}}</h{{- $headingLevel -}}>
+			</header>
+			<div class="flex-expanded"></div>
+			<div class="details">
+				<p class="content">{{ .Item.Description | default .Item.Summary }}</p>
+				{{ partial "facts.html" .Item }}
+			</div>
+		</article>
+	</a>
+</li>

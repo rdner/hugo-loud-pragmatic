@@ -1,0 +1,18 @@
+{{ define "main" }}
+<div class="container">
+	<article class="content">
+		{{ .Content }}
+	</article>
+	{{ $posts := where .Site.RegularPages "Section" "posts" }}
+	{{ $recent := $posts | first 10 }}
+	{{ with $recent }}
+	<aside aria-label="Recent Posts">
+		<h2>Recent Posts</h2>
+		{{ partial "previews.html" (dict "Items" $recent "HeadingLevel" 3) }}
+		{{ if (gt (len $posts) 10) }}
+		<div class="centered"><a href="{{- "/posts" | relURL -}}">View all</a></div>
+		{{ end }}
+	</aside>
+	{{ end }}
+</div>
+{{ end }}

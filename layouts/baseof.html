@@ -1,0 +1,124 @@
+{{- $mainColor := ((.Site.Params.Theme.Colors.Main | default "#5a2673") | safe.CSS) -}}
+<!DOCTYPE HTML>
+<html lang="{{- .Page.Language.Lang -}}">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>{{- with .Params.Artist -}}{{- . }} &mdash; {{ end -}}{{- .Title | strings.Title }}{{- with .Param "author.name" }} | {{ . }}{{- end }} | {{ .Site.Title -}}</title>
+		{{ with .Description }}
+		<meta name="description" content="{{- . -}}" />
+		{{ end }}
+		{{ with .Param "author.name" }}
+		<meta name="author" content="{{- . -}}">
+		{{ end }}
+		{{ with .Site.Copyright }}
+		<meta name="copyright" content="{{- . -}}">
+		{{ end }}
+
+		{{ partial "twitter_cards.html" . }}
+		{{ partial "opengraph.html" . }}
+
+		<meta name="theme-color" content="{{- $mainColor -}}">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-title" content="{{- .Site.Title -}}">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="application-name" content="{{- .Site.Title -}}">
+		<meta name="msapplication-TileColor" content="{{- $mainColor -}}">
+		{{ with .Site.Params.LicenseURL }}
+		<meta name="license" content="{{- . | safe.URL -}}">
+		{{ end }}
+		<meta name="theme" content="Loud Pragmatic">
+
+		<link rel="canonical" href="{{- .Permalink -}}">
+		<style>
+			:root {
+				--main-color: {{ $mainColor -}};
+				--bg-color: {{ (.Site.Params.Theme.Colors.Background | default "#141116") | safe.CSS -}};
+				--highlight-color: {{ (.Site.Params.Theme.Colors.Highlight | default "#8952A2") | safe.CSS -}};
+				--border-color: {{ (.Site.Params.Theme.Colors.Border | default "#D7DADC") | safe.CSS -}};
+				--card-bg-color: {{ (.Site.Params.Theme.Colors.Card.Background | default "#252426") | safe.CSS -}};
+				--card-overlay-color: {{ (.Site.Params.Theme.Colors.Card.Overlay | default "rgba(20,17,22,0.6)") | safe.CSS -}};
+				--text-color: {{ (.Site.Params.Theme.Colors.Text.Main | default "#D7DADC") | safe.CSS -}};
+				--secondary-text-color: {{ (.Site.Params.Theme.Colors.Text.Secondary | default "#C0C0C0") | safe.CSS -}};
+				--highlight-text-color: {{ (.Site.Params.Theme.Colors.Text.Highlight | default "#FFF") | safe.CSS -}};
+			}
+		</style>
+		<link rel="stylesheet" href="{{- "css/styles.css" | relURL -}}" type="text/css">
+		{{ if fileExists "static/favicon.ico" }}
+		<link rel="icon" href="{{- "favicon.ico" | relURL -}}" sizes="48x48">
+		{{ end }}
+		{{ if fileExists "static/favicon.svg" }}
+		<link rel="icon" href="{{- "favicon.svg" | relURL -}}" sizes="any" type="image/svg+xml">
+		{{ end }}
+		{{ if fileExists "static/apple-touch-icon.png" }}
+		<link rel="apple-touch-icon" href="{{- "apple-touch-icon.png" | relURL -}}">
+		{{ end }}
+		{{ if fileExists "static/safari-pinned-tab.svg" }}
+		<link rel="mask-icon" href="{{- "safari-pinned-tab.svg" | relURL -}}" color="{{- $mainColor -}}">
+		{{ end }}
+		{{ if or .IsSection .IsHome }}
+		<link rel="alternate" type="application/rss+xml" title="RSS" href="{{- .Permalink -}}index.xml">
+    <link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="{{- .Permalink -}}index.xml">
+		{{ end }}
+
+		{{ if fileExists "static/site.webmanifest" }}
+		<link rel="manifest" href="{{- "site.webmanifest" | relURL -}}">
+		{{ end }}
+		{{ with .Site.Params.LicenseURL }}
+		<link rel="license" href="{{- . | safe.URL -}}">
+		{{ end }}
+
+		{{ partial "google_analytics.html" . }}
+
+		{{ with .Site.Params.CustomHTML.Head }}
+		{{ . | safe.HTML }}
+		{{ end }}
+	</head>
+	<body>
+		<header class="site-header">
+			<nav class="site-nav undecorated">
+				<ul class="no-bullets">
+					<li>
+						{{ $home := .Site.Home.RelPermalink }}
+						<a href="{{- $home -}}">
+							<img class="logo" alt="website logo" src="{{- "images/logo.svg" | relURL -}}">
+						</a>
+					</li>
+					<li class="flex-expanded"></li>
+					{{ range .Site.Menus.main.ByWeight }}
+					<li>
+						{{ $u := urls.Parse .URL }}
+						<a href="{{- .URL | safe.URL -}}" title="{{- .Title | strings.Title -}}"{{- if $u.IsAbs }} rel="nofollow noreferrer{{- with .Params.rel }} {{ . -}}{{- end -}}" target="_blank"{{- end -}}>
+							{{ $img := printf "static/images/menu/%s.svg" .Identifier }}
+							{{ if fileExists $img }}
+							<img src="{{- $home -}}images/menu/{{- .Identifier -}}.svg" alt="{{- .Name -}}">
+							{{ else }}
+							{{- .Name -}}
+							{{ end }}
+						</a>
+					</li>
+					{{ end }}
+				</ul>
+			</nav>
+		</header>
+
+		<main>
+			{{ block "main" . }}{{ end }}
+		</main>
+
+		{{ $f := first 1 (sort .Site.RegularPages "Date" "asc") }}
+		{{ $firstDate := (index $f 0).Date.Format "2006" }}
+		<footer class="site-footer">
+			<a href="{{- .Site.BaseURL -}}">{{- .Site.Title -}}</a>
+			{{- with .Site.Copyright -}}
+			&copy;&nbsp;{{- $firstDate -}}-{{- now.Format "2006" -}}
+			&nbsp;by&nbsp;{{- . -}}
+			{{- end -}}
+			{{- with .Site.Params.Contact.Email -}}
+			&nbsp;<a href="mailto:{{- . -}}">({{- . -}})</a>
+			{{- end -}}.
+			{{- with .Site.Params.CustomHTML.Footer -}}<br>{{- .  | safe.HTML -}}{{- end -}}
+		</footer>
+	</body>
+</html>

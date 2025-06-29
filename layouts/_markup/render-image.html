@@ -1,0 +1,10 @@
+<p>
+	<figure>
+		<a class="undecorated unpadded" href="{{ .Destination | safe.URL }}" target="_blank">
+			<img src="{{ .Destination | safe.URL }}"
+					 {{- with .PlainText }} alt="{{ . }}"{{ end -}}
+					 >
+			{{- with .Title }}<figcaption>{{ . | strings.Title }}</figcaption>{{ end -}}
+		</a>
+	</figure>
+</p>

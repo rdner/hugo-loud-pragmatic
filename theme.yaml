@@ -1,0 +1,20 @@
+name: Loud Pragmatic
+license: MIT
+licenselink: https://github.com/rdner/hugo-dark-pragma/blob/master/LICENSE
+description: A pragmatic theme for a personal blog with music releases.
+homepage: https://github.com/rdner/hugo-loud-pragmatic
+demosite: https://rdner.de
+
+tags:
+  - blog
+  - music
+features:
+  - articles
+  - music releases
+  - semantic markup
+  - color customization
+  - multi-author support
+min_version: 0.146.6
+author:
+  name: Denis Rechkunov
+  homepage: https://rdner.de

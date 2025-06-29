@@ -1,0 +1,7 @@
+<figure class="quote">
+	<span>&ldquo;</span>
+  <blockquote>
+		{{ (replace .Text "\n" "<br>") | safe.HTML }}
+  </blockquote>
+	<span>&bdquo;</span>
+</figure>

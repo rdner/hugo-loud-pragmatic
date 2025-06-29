@@ -1,0 +1,16 @@
+{{ $headingLevel := ( .HeadingLevel | default 3) }}
+{{ if .Items }}
+<ul class="no-bullets undecorated previews">
+	{{ $template := "" }}
+	{{ range .Items }}
+	{{ if eq .Section "music" }}
+	{{ $template = "music-preview.html" }}
+	{{ else }}
+	{{ $template = "preview.html" }}
+	{{ end }}
+	{{ partial $template (dict "Item" . "HeadingLevel" $headingLevel) }}
+	{{ end }}
+</ul>
+{{ else }}
+<h{{- $headingLevel -}} class="centered">Nothing on the list yet.</h{{- $headingLevel -}}>
+{{ end }}

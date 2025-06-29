@@ -1,0 +1,10 @@
+{{ define "main" }}
+<div class="container">
+	{{ partial "breadcrumbs.html" . }}
+	<h1>
+		{{ .Title | strings.Title }}
+	</h1>
+	{{ .Description }}
+	{{ partial "previews.html" (dict "Items" .Pages "HeadingLevel" 2) }}
+</div>
+{{ end }}

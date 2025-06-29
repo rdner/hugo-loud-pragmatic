@@ -1,0 +1,9 @@
+{{ if .IsPage }}
+<div class="facts">
+	<time datetime="{{- .Page.PublishDate -}}">{{- .Page.PublishDate.Format "Jan 2, 2006" -}}</time>
+	&nbsp;/&nbsp;
+	~{{- .FuzzyWordCount -}}&nbsp;words
+	&nbsp;/&nbsp;
+	{{- .ReadingTime -}}&nbsp;min&nbsp;read
+</div>
+{{ end }}
