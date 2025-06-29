@@ -66,14 +66,21 @@
 		<meta property="og:type" content="website">
 		{{- end }}
 
+		{{ $images := slice }}
 		{{ $cover := (.Page.Resources.GetMatch "cover.*") }}
 		{{ if $cover }}
-		<meta property="og:image" content="{{ $cover.Permalink }}">
-		{{ else }}
-		{{ $images := (.Page.Resources.Match "**.{jpg,jpeg,png,gif,webp,avif,heic,heif,bmp,tif,tiff}") }}
+		{{ $images = $images | append $cover }}
+		{{ end }}
+
+		{{ $contentImages := (.Page.Resources.Match "**.{jpg,jpeg,png,gif,webp,avif,heic,heif,bmp,tif,tiff}") }}
+		{{ if $contentImages }}
+		{{ $images = $images | append $contentImages }}
+		{{ end }}
+
 		{{- range $images | first 6 }}
-    <meta property="og:image" content="{{ .Permalink }}">
-		{{- end }}
+		<meta property="og:image" content="{{- .Permalink -}}">
+		<meta property="og:image:secure_url" content="{{- .Permalink -}}">
+		<meta property="og:image:type" content="{{- .MediaType.Type -}}">
 		{{- end }}
 
 		{{ $tracks := (.Page.Resources.Match "**.{mp3,aac,ogg,flac,alac,ape,wav,aiff,wma,m4a,opus}") }}
