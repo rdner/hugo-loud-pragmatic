@@ -5,19 +5,81 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<title>{{- with .Params.Artist -}}{{- . }} &mdash; {{ end -}}{{- .Title | strings.Title }}{{- with .Param "author.name" }} | {{ . }}{{- end }} | {{ .Site.Title -}}</title>
-		{{ with .Description }}
-		<meta name="description" content="{{- . -}}" />
+		{{ $artist := "" }}
+		{{- with .Params.Artist -}}{{ $artist = printf "%s — " .  }} {{ end }}
+		{{ $title :=  .Title | strings.Title }}
+		{{ $author := "" }}
+		{{- with .Param "author.name" }}{{ $author = printf " | %s"  .  }}{{- end }}
+		{{ $fullTitle := printf "%s%s%s" $artist $title $author }}
+		<title>{{- $fullTitle }} | {{ .Site.Title -}}</title>
+		{{ $description := trim ((or .Description .Summary) | plainify | htmlUnescape) "\n\r\t " }}
+		{{ with $description }}
+		<meta name="description" content="{{- . -}}">
 		{{ end }}
+
 		{{ with .Param "author.name" }}
 		<meta name="author" content="{{- . -}}">
 		{{ end }}
+
 		{{ with .Site.Copyright }}
 		<meta name="copyright" content="{{- . -}}">
 		{{ end }}
 
-		{{ partial "twitter_cards.html" . }}
-		{{ partial "opengraph.html" . }}
+		<meta property="og:url" content="{{ .Permalink }}">
+
+		{{- with .Site.Title }}
+		<meta property="og:site_name" content="{{ . }}">
+		{{- end }}
+
+		<meta property="og:title" content="{{- $fullTitle -}}">
+
+		{{- with $description }}
+		<meta property="og:description" content="{{ . }}">
+		{{- end }}
+
+		{{- with .Page.Language.LanguageCode }}
+		<meta property="og:locale" content="{{ replace . `-` `_` }}">
+		{{- end }}
+
+		{{- if .IsPage }}
+
+		<meta property="og:type" content="article">
+
+		{{- with .Section }}
+    <meta property="article:section" content="{{ . }}">
+		{{- end }}
+
+		{{- $ISO8601 := "2006-01-02T15:04:05-07:00" }}
+		{{- with .PublishDate }}
+    <meta property="article:published_time" {{ .Format $ISO8601 | printf "content=%q" | safeHTMLAttr }}>
+		{{- end }}
+
+		{{- with .Lastmod }}
+    <meta property="article:modified_time" {{ .Format $ISO8601 | printf "content=%q" | safeHTMLAttr }}>
+		{{- end }}
+
+		{{- range .Keywords | first 6 }}
+    <meta property="article:tag" content="{{ . | plainify }}">
+		{{- end }}
+
+		{{- else }}
+		<meta property="og:type" content="website">
+		{{- end }}
+
+		{{ $cover := (.Page.Resources.GetMatch "cover.*") }}
+		{{ if $cover }}
+		<meta property="og:image" content="{{ $cover.Permalink }}">
+		{{ else }}
+		{{ $images := (.Page.Resources.Match "**.{jpg,jpeg,png,gif,webp,avif,heic,heif,bmp,tif,tiff}") }}
+		{{- range $images | first 6 }}
+    <meta property="og:image" content="{{ .Permalink }}">
+		{{- end }}
+		{{- end }}
+
+		{{ $tracks := (.Page.Resources.Match "**.{mp3,aac,ogg,flac,alac,ape,wav,aiff,wma,m4a,opus}") }}
+		{{- range $tracks | first 6  }}
+    <meta property="og:audio" content="{{ .Permalink }}">
+		{{- end }}
 
 		<meta name="theme-color" content="{{- $mainColor -}}">
 		<meta name="apple-mobile-web-app-capable" content="yes">
