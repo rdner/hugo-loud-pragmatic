@@ -5,6 +5,8 @@
 		{{ .Title | strings.Title }}
 	</h1>
 	{{ .Description }}
-	{{ partial "previews.html" (dict "Items" .Pages "HeadingLevel" 2) }}
+	{{ $paginator := .Paginate .Pages.ByDate.Reverse }}
+	{{ partial "previews.html" (dict "Items" $paginator.Pages "HeadingLevel" 2) }}
 </div>
+{{ partial "pagination.html" . }}
 {{ end }}
