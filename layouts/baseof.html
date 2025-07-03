@@ -181,7 +181,7 @@
 		<footer class="site-footer">
 			<a href="{{- .Site.BaseURL -}}">{{- .Site.Title -}}</a>
 			{{- with .Site.Copyright -}}
-			&copy;&nbsp;{{- $firstDate -}}-{{- now.Format "2006" -}}
+			&nbsp;&copy;&nbsp;{{- $firstDate -}}-{{- now.Format "2006" -}}
 			&nbsp;by&nbsp;{{- . -}}
 			{{- end -}}
 			{{- with .Site.Params.Contact.Email -}}
