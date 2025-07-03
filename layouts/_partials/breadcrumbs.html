@@ -1,5 +1,5 @@
 {{ if . }}
 <div class="breadcrumbs undecorated">
-	{{ partial "breadcrumb.html" .Parent }}<span class="breadcrumb">{{ .Title | strings.Title }}</span>
+	{{- partial "breadcrumb.html" .Parent -}}<span class="final breadcrumb">{{- .Title | strings.Title -}}</span>
 </div>
 {{ end }}

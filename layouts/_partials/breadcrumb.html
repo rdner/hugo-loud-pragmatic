@@ -2,5 +2,6 @@
 {{ partial "breadcrumb.html" .Parent }}
 {{ end }}
 <span class="breadcrumb">
-<a href="{{- .RelPermalink -}}">{{- if .IsHome -}}Home{{- else -}}{{- .Title | strings.Title -}}{{- end -}}</a>
-</span>
+	<a href="{{- .RelPermalink -}}">{{- if .IsHome -}}Home{{- else -}}{{- .Title | strings.Title -}}{{- end -}}
+	</a>
+</span>→
