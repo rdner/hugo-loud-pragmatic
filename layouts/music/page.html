@@ -1,21 +1,42 @@
 {{ define "main" }}
-{{ $cover := (.Page.Resources.GetMatch "cover.*") }}
-{{ $tracks := (.Page.Resources.Match "**.{mp3,aac,ogg,flac,alac,ape,wav,aiff,wma,m4a,opus}") }}
 <div class="container">
 	{{ partial "breadcrumbs.html" . }}
 	<article class="music release">
 		<header>
 			<h1>{{- with .Params.Artist -}}{{- . }} &mdash; {{ end -}}{{- .Title | strings.Title }} ({{ .Page.PublishDate.Format "2006" -}})</h1>
+			{{ $cover := (.Page.Resources.GetMatch "cover.*") }}
 			{{ with $cover }}
 			<img class="cover" src="{{- . -}}" alt="release cover">
 			{{ end }}
 		</header>
 		<section>
+			{{ $tracks := dict }}
+			{{ $resources := (.Page.Resources.Match "**.{mp3,aac,ogg,flac,alac,ape,wav,aiff,wma,m4a,opus}") }}
+			{{ range $resources }}
+			{{ $ext := path.Ext .Name }}
+			{{ $title := strings.TrimSuffix $ext (path.Base .Name) }}
+			{{ $formats := (index $tracks $title) | default slice }}
+			{{ $format := dict "link" .Permalink "mime" .MediaType "name" (strings.ToUpper (strings.Substr $ext 1)) }}
+			{{ $formats = append $format $formats }}
+			{{ $tracks = merge $tracks (dict $title $formats) }}
+			{{ end }}
 			<ul class="no-bullets tracks">
-				{{ range $tracks }}
+				{{ range $title, $formats := $tracks }}
 				<li>
-					<a href="{{- . -}}" target=_blank>{{- . -}}</a>
-					<audio controls preload="none" src="{{- . -}}" ></audio>
+					<div class="title">
+					{{ $title }}
+					<ul class="no-bullets formats">
+						{{ range $formats }}
+						<li><a href="{{- .link -}}" target=_blank>{{- .name -}}</a></li>
+						{{ end }}
+					</ul>
+					</div>
+					<audio controls preload="none">
+						{{ range $formats }}
+						<source src="{{- .link -}}" type="{{- .mime.Type -}}">
+						{{ end }}
+						Your browser does not support the audio element.
+					</audio>
 				</li>
 				{{ end }}
 			</ul>
@@ -34,4 +55,4 @@
 	</aside>
 	{{ end }}
 </div>
-{{ end }} 
+{{ end }}
