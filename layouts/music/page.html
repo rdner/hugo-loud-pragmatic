@@ -10,13 +10,30 @@
 			{{ end }}
 		</header>
 		<section>
+			{{/* the detected media types are usually incorrect for browsers */}}
+			{{ $mediaTypes := dict
+			"MP3"  "audio/mpeg"
+			"AAC"  "audio/aac"
+			"OGG"  "audio/ogg"
+			"FLAC" "audio/flac"
+			"ALAC" "audio/mp4"
+			"APE"  "audio/ape"
+			"WAV"  "audio/wav"
+			"AIFF" "audio/aiff"
+			"WMA"  "audio/x-ms-wma"
+			"M4A"  "audio/mp4"
+			"OPUS" "audio/ogg"
+			}}
 			{{ $tracks := dict }}
+
 			{{ $resources := (.Page.Resources.Match "**.{mp3,aac,ogg,flac,alac,ape,wav,aiff,wma,m4a,opus}") }}
 			{{ range $resources }}
 			{{ $ext := path.Ext .Name }}
+			{{ $formatName := strings.ToUpper (strings.Substr $ext 1) }}
+			{{ $mediaType := index $mediaTypes $formatName }}
 			{{ $title := strings.TrimSuffix $ext (path.Base .Name) }}
 			{{ $formats := (index $tracks $title) | default slice }}
-			{{ $format := dict "link" .Permalink "mime" .MediaType "name" (strings.ToUpper (strings.Substr $ext 1)) }}
+			{{ $format := dict "link" .Permalink "mediaType" $mediaType "name" $formatName  }}
 			{{ $formats = append $format $formats }}
 			{{ $tracks = merge $tracks (dict $title $formats) }}
 			{{ end }}
@@ -33,7 +50,7 @@
 					</div>
 					<audio controls preload="none">
 						{{ range $formats }}
-						<source src="{{- .link -}}" type="{{- .mime.Type -}}">
+						<source src="{{- .link -}}" type="{{- .mediaType -}}">
 						{{ end }}
 						Your browser does not support the audio element.
 					</audio>
