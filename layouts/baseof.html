@@ -74,7 +74,11 @@
 
 		{{ $contentImages := (.Page.Resources.Match "**.{jpg,jpeg,png,gif,webp,avif,heic,heif,bmp,tif,tiff}") }}
 		{{ if $contentImages }}
-		{{ $images = $images | append $contentImages }}
+		{{ range $contentImages }}
+		{{ if or (not $cover) (ne .RelPermalink $cover.RelPermalink) }}
+    {{ $images = $images | append . }}
+		{{ end }}
+		{{ end }}
 		{{ end }}
 
 		{{- range $images | first 6 }}
